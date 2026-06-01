@@ -1,65 +1,252 @@
-import Image from "next/image";
+'use client'
+import { useState, useEffect, useRef } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+import Papa from 'papaparse'
+
+// --- ADD THIS LINE ---
+// This forces Tailwind to "see" and keep these colors during the build process!
+const SAFELIST = "text-zinc-400 text-green-500 text-blue-600 text-purple-500 text-orange-500 text-red-600 text-cyan-400 text-yellow-400 text-fuchsia-500 text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+
+// 1. Define our two new data types
+interface RarityTier {
+  rarity: string;
+  weight: number;
+  color: string;
+}
+
+interface LootItem {
+  item_slug: string;
+  tier: string;
+  weight: number;
+  color: string;
+}
 
 export default function Home() {
+  const [user, setUser] = useState<any>(null)
+  const [lastItem, setLastItem] = useState("???")
+  const [chance, setChance] = useState("")
+  const [lastColor, setLastColor] = useState("text-zinc-600")
+  const [rolling, setRolling] = useState(false)
+  
+  // State for our two CSV databases
+  const [rarities, setRarities] = useState<RarityTier[]>([])
+  const [allItems, setAllItems] = useState<LootItem[]>([])
+
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  useEffect(() => {
+    audioRef.current = new Audio('/ping.mp3')
+
+    async function getUser() {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+
+    // 2. Load BOTH CSV files at the same time and sanitize the strings
+    async function loadGameData() {
+      try {
+        const [rarityRes, itemsRes] = await Promise.all([
+          fetch('/rarity_table.csv'),
+          fetch('/item_table.csv')
+        ])
+        
+        const rarityText = await rarityRes.text()
+        const itemsText = await itemsRes.text()
+
+        Papa.parse(rarityText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            // Sanitize string fields
+            const cleaned = results.data.map((r: any) => ({
+              ...r,
+              rarity: r.rarity?.trim(),
+              color: r.color?.trim().replace(/^"|"$/g, '')
+            }))
+            setRarities(cleaned)
+          }
+        })
+
+        Papa.parse(itemsText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            // Sanitize item text and scrub hidden newlines/quotes from CSV formatting
+            const cleaned = results.data.map((item: any) => ({
+              ...item,
+              item_slug: item.item_slug?.trim(),
+              tier: item.tier?.trim(),
+              color: item.color?.trim().replace(/\s+/g, ' ').replace(/^"|"$/g, '')
+            }))
+            setAllItems(cleaned)
+          }
+        })
+      } catch (error) {
+        console.error("Failed to load CSVs:", error)
+      }
+    }
+    
+    loadGameData()
+  }, [])
+
+  const signIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: typeof window !== 'undefined' ? window.location.origin : '' }
+    })
+  }
+
+  const roll = async () => {
+    // Make sure both CSVs are fully loaded before letting the user roll
+    if (rolling || rarities.length === 0 || allItems.length === 0) return 
+    
+    setRolling(true)
+    
+    // --- STEP 1: ROLL FOR RARITY TIER ---
+    const totalRarityWeight = rarities.reduce((sum, r) => sum + r.weight, 0)
+    let rarityTicket = Math.floor(Math.random() * totalRarityWeight)
+    let wonRarity = rarities[0]
+
+    for (const r of rarities) {
+      if (rarityTicket < r.weight) {
+        wonRarity = r
+        break
+      }
+      rarityTicket -= r.weight
+    }
+
+    // --- STEP 2: ROLL FOR ITEM WITHIN THAT TIER ---
+    // Filter the massive item list down to JUST the items that match the won rarity
+    const possibleItems = allItems.filter(item => item.tier === wonRarity.rarity)
+    
+    // Fallback in case a tier has no items yet
+    if (possibleItems.length === 0) {
+      console.error(`No items found for tier: ${wonRarity.rarity}`)
+      setRolling(false)
+      return
+    }
+
+    const totalItemWeight = possibleItems.reduce((sum, item) => sum + item.weight, 0)
+    let itemTicket = Math.floor(Math.random() * totalItemWeight)
+    let wonItem = possibleItems[0]
+
+    for (const item of possibleItems) {
+      if (itemTicket < item.weight) {
+        wonItem = item
+        break
+      }
+      itemTicket -= item.weight
+    }
+
+    // --- EXECUTE ROLL UI & SAVE ---
+    await new Promise(r => setTimeout(r, 1000))
+
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0 
+      audioRef.current.play().catch(e => console.log("Audio blocked"))
+    }
+
+    if (user) {
+      const { error } = await supabase
+        .from('inventory')
+        .insert([{ user_id: user.id, item_slug: wonItem.item_slug, item_type: 'material' }])
+        
+      if (error) {
+        console.error("Error saving:", JSON.stringify(error, null, 2))
+      }
+    }
+    
+    setLastItem(wonItem.item_slug)
+    
+    // --- CHANGE TEXT COLOR BASED ON ITEM CSV ---
+    setLastColor(wonItem.color) 
+    
+    // --- CALCULATE TRUE FRACTIONAL ODDS (e.g., 1 / 250) ---
+    const rarityProbability = wonRarity.weight / totalRarityWeight
+    const itemProbabilityInTier = wonItem.weight / totalItemWeight
+    const totalProbability = rarityProbability * itemProbabilityInTier
+    
+    // Invert the probability to get the "1 out of X" denominator
+    const rawDenominator = 1 / totalProbability
+    
+    let formattedFraction = ""
+    if (rawDenominator >= 1000000) {
+      // For mega rare drops like Ascended, format as millions (e.g., 1 / 10.6M)
+      formattedFraction = `1 / ${(rawDenominator / 1000000).toFixed(1)}M`
+    } else if (rawDenominator >= 1000) {
+      // For thousands, format with a comma (e.g., 1 / 2,500)
+      formattedFraction = `1 / ${Math.round(rawDenominator).toLocaleString()}`
+    } else {
+      // For regular common drops, format cleanly (e.g., 1 / 4)
+      formattedFraction = `1 / ${Math.round(rawDenominator)}`
+    }
+    
+    setChance(formattedFraction)
+    
+    setRolling(false)
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-sans overflow-hidden">
+      
+      <div className="absolute top-10 w-full px-10 flex justify-between items-center">
+        <h1 className="text-2xl font-black tracking-tighter text-white">ALEAGO</h1>
+        {user ? (
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] font-mono text-zinc-500">{user.email}</span>
+            <a href="/inventory" className="text-[10px] bg-zinc-900 border border-zinc-700 px-4 py-1 rounded font-bold hover:bg-white hover:text-black transition-colors">
+              INVENTORY
+            </a>
+            <button onClick={() => supabase.auth.signOut()} className="text-[10px] border border-zinc-800 px-3 py-1 rounded hover:bg-zinc-900 transition-colors">LOGOUT</button>
+          </div>
+        ) : (
+          <button onClick={signIn} className="bg-white text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest">LOGIN</button>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center">
+        <div className="w-80 h-72 border border-zinc-800 rounded-[2.5rem] mb-10 flex flex-col items-center justify-center bg-zinc-950 shadow-2xl relative">
+          
+          <span className={`text-3xl font-mono tracking-tight transition-all duration-300 capitalize ${lastColor} ${rolling ? 'opacity-20 blur-md' : 'opacity-100'}`}>
+            {lastItem}
+          </span>
+
+          <div className={`mt-4 text-xs font-mono text-zinc-600 border border-zinc-800 border-dashed rounded flex items-center justify-center w-24 h-24 transition-all ${rolling ? 'opacity-20 blur-md' : 'opacity-100'}`}>
+            [IMAGE]
+          </div>
+          
+          <div className="h-8 mt-4">
+            {!rolling && chance && (
+              <span className="text-sm font-mono text-zinc-500 tracking-tighter animate-in fade-in zoom-in duration-300">
+                {chance}
+              </span>
+            )}
+            {rolling && (
+              <span className="text-xs font-mono text-zinc-700 animate-pulse uppercase tracking-[0.2em]">
+                Scanning...
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        <button 
+          onClick={roll}
+          // The button is disabled if the CSVs haven't loaded yet!
+          disabled={rolling || !user || rarities.length === 0 || allItems.length === 0}
+          className="w-40 py-4 bg-white text-black rounded-full font-black tracking-[0.2em] text-xs hover:bg-zinc-200 active:scale-95 transition-all disabled:opacity-10"
+        >
+          {rolling ? "ROLLING" : "ROLL"}
+        </button>
+        
+        {!user && <p className="mt-6 text-zinc-600 text-[10px] uppercase tracking-widest animate-pulse">Authentication Required</p>}
+      </div>
+
+      <div className="absolute bottom-10 opacity-10 text-[10px] font-mono tracking-[0.5em]">
+        SYSTEM_READY // SECTOR_07
+      </div>
     </div>
-  );
+  )
 }
