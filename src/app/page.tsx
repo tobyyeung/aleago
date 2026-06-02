@@ -92,13 +92,6 @@ export default function Home() {
     loadGameData()
   }, [])
 
-  const signIn = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: typeof window !== 'undefined' ? window.location.origin : '' }
-    })
-  }
-
   const roll = async () => {
     // Make sure both CSVs are fully loaded before letting the user roll
     if (rolling || rarities.length === 0 || allItems.length === 0) return 
@@ -190,25 +183,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-black text-white flex flex-col font-sans">
-      
-      <header className="w-full px-4 py-4 sm:px-6 sm:py-6 md:px-10 md:py-8 flex flex-row justify-between items-center shrink-0">
-        <h1 className="text-xl sm:text-2xl font-black tracking-tighter text-white">ALEAGO</h1>
-        {user ? (
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-            <span className="text-[10px] font-mono text-zinc-500 truncate max-w-[min(100%,12rem)] sm:max-w-[16rem]">
-              {user.email}
-            </span>
-            <a href="/inventory" className="text-[10px] bg-zinc-900 border border-zinc-700 px-3 sm:px-4 py-1 rounded font-bold hover:bg-white hover:text-black transition-colors whitespace-nowrap">
-              INVENTORY
-            </a>
-            <button onClick={() => supabase.auth.signOut()} className="text-[10px] border border-zinc-800 px-3 py-1 rounded hover:bg-zinc-900 transition-colors whitespace-nowrap">LOGOUT</button>
-          </div>
-        ) : (
-          <button onClick={signIn} className="w-fit bg-white text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest">LOGIN</button>
-        )}
-      </header>
-
+    <>
       <main className="flex-1 flex flex-col items-center justify-center px-4 pb-16 sm:px-6 md:pb-20">
         <div className="w-full max-w-[20rem] sm:max-w-[22rem] md:max-w-[24rem] min-h-[16rem] sm:min-h-[18rem] border border-zinc-800 rounded-3xl sm:rounded-[2.5rem] mb-6 sm:mb-8 md:mb-10 flex flex-col items-center justify-center bg-zinc-950 shadow-2xl relative p-4 sm:p-6">
           
@@ -248,6 +223,6 @@ export default function Home() {
       <footer className="shrink-0 pb-6 sm:pb-8 md:pb-10 text-center opacity-10 text-[8px] sm:text-[10px] font-mono tracking-[0.3em] sm:tracking-[0.5em]">
         SYSTEM_READY // SECTOR_07
       </footer>
-    </div>
+    </>
   )
 }
