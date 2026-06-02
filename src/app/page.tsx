@@ -190,37 +190,39 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-sans overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] bg-black text-white flex flex-col font-sans">
       
-      <div className="absolute top-10 w-full px-10 flex justify-between items-center">
-        <h1 className="text-2xl font-black tracking-tighter text-white">ALEAGO</h1>
+      <header className="w-full px-4 py-4 sm:px-6 sm:py-6 md:px-10 md:py-8 flex flex-row justify-between items-center shrink-0">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tighter text-white">ALEAGO</h1>
         {user ? (
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-mono text-zinc-500">{user.email}</span>
-            <a href="/inventory" className="text-[10px] bg-zinc-900 border border-zinc-700 px-4 py-1 rounded font-bold hover:bg-white hover:text-black transition-colors">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+            <span className="text-[10px] font-mono text-zinc-500 truncate max-w-[min(100%,12rem)] sm:max-w-[16rem]">
+              {user.email}
+            </span>
+            <a href="/inventory" className="text-[10px] bg-zinc-900 border border-zinc-700 px-3 sm:px-4 py-1 rounded font-bold hover:bg-white hover:text-black transition-colors whitespace-nowrap">
               INVENTORY
             </a>
-            <button onClick={() => supabase.auth.signOut()} className="text-[10px] border border-zinc-800 px-3 py-1 rounded hover:bg-zinc-900 transition-colors">LOGOUT</button>
+            <button onClick={() => supabase.auth.signOut()} className="text-[10px] border border-zinc-800 px-3 py-1 rounded hover:bg-zinc-900 transition-colors whitespace-nowrap">LOGOUT</button>
           </div>
         ) : (
-          <button onClick={signIn} className="bg-white text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest">LOGIN</button>
+          <button onClick={signIn} className="w-fit bg-white text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest">LOGIN</button>
         )}
-      </div>
+      </header>
 
-      <div className="flex flex-col items-center">
-        <div className="w-80 h-72 border border-zinc-800 rounded-[2.5rem] mb-10 flex flex-col items-center justify-center bg-zinc-950 shadow-2xl relative">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-16 sm:px-6 md:pb-20">
+        <div className="w-full max-w-[20rem] sm:max-w-[22rem] md:max-w-[24rem] min-h-[16rem] sm:min-h-[18rem] border border-zinc-800 rounded-3xl sm:rounded-[2.5rem] mb-6 sm:mb-8 md:mb-10 flex flex-col items-center justify-center bg-zinc-950 shadow-2xl relative p-4 sm:p-6">
           
-          <span className={`text-3xl font-mono tracking-tight transition-all duration-300 capitalize ${lastColor} ${rolling ? 'opacity-20 blur-md' : 'opacity-100'}`}>
+          <span className={`text-xl sm:text-2xl md:text-3xl font-mono tracking-tight transition-all duration-300 capitalize text-center px-2 ${lastColor} ${rolling ? 'opacity-20 blur-md' : 'opacity-100'}`}>
             {lastItem}
           </span>
 
-          <div className={`mt-4 text-xs font-mono text-zinc-600 border border-zinc-800 border-dashed rounded flex items-center justify-center w-24 h-24 transition-all ${rolling ? 'opacity-20 blur-md' : 'opacity-100'}`}>
+          <div className={`mt-3 sm:mt-4 text-xs font-mono text-zinc-600 border border-zinc-800 border-dashed rounded flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transition-all ${rolling ? 'opacity-20 blur-md' : 'opacity-100'}`}>
             [IMAGE]
           </div>
           
-          <div className="h-8 mt-4">
+          <div className="min-h-8 mt-3 sm:mt-4">
             {!rolling && chance && (
-              <span className="text-sm font-mono text-zinc-500 tracking-tighter animate-in fade-in zoom-in duration-300">
+              <span className="text-xs sm:text-sm font-mono text-zinc-500 tracking-tighter animate-in fade-in zoom-in duration-300">
                 {chance}
               </span>
             )}
@@ -234,19 +236,18 @@ export default function Home() {
 
         <button 
           onClick={roll}
-          // The button is disabled if the CSVs haven't loaded yet!
           disabled={rolling || !user || rarities.length === 0 || allItems.length === 0}
-          className="w-40 py-4 bg-white text-black rounded-full font-black tracking-[0.2em] text-xs hover:bg-zinc-200 active:scale-95 transition-all disabled:opacity-10"
+          className="w-full max-w-[10rem] sm:max-w-[11rem] py-3 sm:py-4 bg-white text-black rounded-full font-black tracking-[0.2em] text-xs hover:bg-zinc-200 active:scale-95 transition-all disabled:opacity-10"
         >
           {rolling ? "ROLLING" : "ROLL"}
         </button>
         
-        {!user && <p className="mt-6 text-zinc-600 text-[10px] uppercase tracking-widest animate-pulse">Authentication Required</p>}
-      </div>
+        {!user && <p className="mt-4 sm:mt-6 text-zinc-600 text-[10px] uppercase tracking-widest animate-pulse text-center">Authentication Required</p>}
+      </main>
 
-      <div className="absolute bottom-10 opacity-10 text-[10px] font-mono tracking-[0.5em]">
+      <footer className="shrink-0 pb-6 sm:pb-8 md:pb-10 text-center opacity-10 text-[8px] sm:text-[10px] font-mono tracking-[0.3em] sm:tracking-[0.5em]">
         SYSTEM_READY // SECTOR_07
-      </div>
+      </footer>
     </div>
   )
 }
