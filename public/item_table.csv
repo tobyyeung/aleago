@@ -1,0 +1,101 @@
+item_slug,tier,weight,color
+Common 1,common,60,text-zinc-400
+Common 2,common,55,text-zinc-400
+Common 3,common,50,text-zinc-400
+Common 4,common,40,text-zinc-400
+Common 5,common,30,text-zinc-400
+Common 6,common,20,text-zinc-400
+Common 7,common,10,text-zinc-400
+Common 8,common,5,text-zinc-400
+Common 9,common,3,text-zinc-400
+Common 10,common,1,text-zinc-400
+Uncommon 1,uncommon,60,text-green-500
+Uncommon 2,uncommon,55,text-green-500
+Uncommon 3,uncommon,50,text-green-500
+Uncommon 4,uncommon,40,text-green-500
+Uncommon 5,uncommon,30,text-green-500
+Uncommon 6,uncommon,20,text-green-500
+Uncommon 7,uncommon,10,text-green-500
+Uncommon 8,uncommon,5,text-green-500
+Uncommon 9,uncommon,3,text-green-500
+Uncommon 10,uncommon,1,text-green-500
+Rare 1,rare,60,text-blue-600
+Rare 2,rare,55,text-blue-600
+Rare 3,rare,50,text-blue-600
+Rare 4,rare,40,text-blue-600
+Rare 5,rare,30,text-blue-600
+Rare 6,rare,20,text-blue-600
+Rare 7,rare,10,text-blue-600
+Rare 8,rare,5,text-blue-600
+Rare 9,rare,3,text-blue-600
+Rare 10,rare,1,text-blue-600
+Epic 1,epic,60,text-purple-500
+Epic 2,epic,55,text-purple-500
+Epic 3,epic,50,text-purple-500
+Epic 4,epic,40,text-purple-500
+Epic 5,epic,30,text-purple-500
+Epic 6,epic,20,text-purple-500
+Epic 7,epic,10,text-purple-500
+Epic 8,epic,5,text-purple-500
+Epic 9,epic,3,text-purple-500
+Epic 10,epic,1,text-purple-500
+Legendary 1,legendary,60,text-orange-500
+Legendary 2,legendary,55,text-orange-500
+Legendary 3,legendary,50,text-orange-500
+Legendary 4,legendary,40,text-orange-500
+Legendary 5,legendary,30,text-orange-500
+Legendary 6,legendary,20,text-orange-500
+Legendary 7,legendary,10,text-orange-500
+Legendary 8,legendary,5,text-orange-500
+Legendary 9,legendary,3,text-orange-500
+Legendary 10,legendary,1,text-orange-500
+Mythic 1,mythic,60,text-red-600
+Mythic 2,mythic,55,text-red-600
+Mythic 3,mythic,50,text-red-600
+Mythic 4,mythic,40,text-red-600
+Mythic 5,mythic,30,text-red-600
+Mythic 6,mythic,20,text-red-600
+Mythic 7,mythic,10,text-red-600
+Mythic 8,mythic,5,text-red-600
+Mythic 9,mythic,3,text-red-600
+Mythic 10,mythic,1,text-red-600
+Superior 1,superior,60,text-cyan-400
+Superior 2,superior,55,text-cyan-400
+Superior 3,superior,50,text-cyan-400
+Superior 4,superior,40,text-cyan-400
+Superior 5,superior,30,text-cyan-400
+Superior 6,superior,20,text-cyan-400
+Superior 7,superior,10,text-cyan-400
+Superior 8,superior,5,text-cyan-400
+Superior 9,superior,3,text-cyan-400
+Superior 10,superior,1,text-cyan-400
+Ultimate 1,ultimate,60,text-yellow-400
+Ultimate 2,ultimate,55,text-yellow-400
+Ultimate 3,ultimate,50,text-yellow-400
+Ultimate 4,ultimate,40,text-yellow-400
+Ultimate 5,ultimate,30,text-yellow-400
+Ultimate 6,ultimate,20,text-yellow-400
+Ultimate 7,ultimate,10,text-yellow-400
+Ultimate 8,ultimate,5,text-yellow-400
+Ultimate 9,ultimate,3,text-yellow-400
+Ultimate 10,ultimate,1,text-yellow-400
+Divine 1,divine,60,text-fuchsia-500
+Divine 2,divine,55,text-fuchsia-500
+Divine 3,divine,50,text-fuchsia-500
+Divine 4,divine,40,text-fuchsia-500
+Divine 5,divine,30,text-fuchsia-500
+Divine 6,divine,20,text-fuchsia-500
+Divine 7,divine,10,text-fuchsia-500
+Divine 8,divine,5,text-fuchsia-500
+Divine 9,divine,3,text-fuchsia-500
+Divine 10,divine,1,text-fuchsia-500
+Ascended 1,ascended,60,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 2,ascended,55,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 3,ascended,50,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 4,ascended,40,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 5,ascended,30,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 6,ascended,20,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 7,ascended,10,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 8,ascended,5,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 9,ascended,3,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+Ascended 10,ascended,1,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"

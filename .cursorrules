@@ -1,0 +1,17 @@
+# Project: ALEAGO
+Browser-based Incremental / RNG Scavenger / Casino-Arcade / RPG Crafting Game.
+
+## Tech Stack
+- Frontend: Next.js (App Router), React, Tailwind CSS, TypeScript
+- Backend: Supabase (PostgreSQL, Auth, RLS)
+- Data Management: PapaParse (CSV-driven game economy)
+
+## Critical Architectural Rules
+1. **Server-Side Authority (Anti-Cheat):** The client must NEVER directly update player balances or insert RNG-rolled items into the database. All critical game logic (rolling, gambling math, crafting timers) MUST occur securely via Next.js Server Actions or API routes using the `supabaseAdmin` service role key.
+2. **Database Security:** The frontend client (`supabaseClient.ts`) only has RLS permission to `SELECT` (read) and `DELETE` (sell) their own inventory. 
+3. **Admin Client Separation:** `src/lib/supabaseAdmin.ts` holds the service role key. It must NEVER be imported into client components (e.g., `page.tsx`).
+4. **CSV-Driven Economy:** Loot tables, weights, tiers, and colors are defined in `public/item_table.csv` and `public/rarity_table.csv`. Do not hardcode drop arrays in TypeScript.
+5. **Tailwind Purging:** Always include a `SAFELIST` string variable in components that render dynamic colors from the CSV to prevent Tailwind from purging them during build.
+
+## Game Design & Concept
+Always refer to the markdown files in the `docs/` folder for game mechanics, UI/UX aesthetics (Industrial Dark + Neon Arcade), and the core gameplay loop (Scavenge -> Gamble -> Forge -> Perfect).
