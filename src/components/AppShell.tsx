@@ -92,7 +92,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          {user && <CurrencyDisplay />}
+          {user && <CurrencyDisplay user={user} />}
           {!user && (
             <button
               type="button"
