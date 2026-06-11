@@ -1,11 +1,11 @@
-rarity,weight,color,sell_value
-common,5000000,text-zinc-400,5
-uncommon,4000000,text-green-500,25
-rare,1000000,text-blue-600,100
-epic,500000,text-purple-500,500
-legendary,100000,text-orange-500,2500
-mythic,10000,text-red-600,10000
-superior,1000,text-cyan-400,50000
-ultimate,100,text-yellow-400,250000
-divine,10,text-fuchsia-500,1000000
-ascended,1,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]",10000000
+rarity,weight,color
+common,5000000,text-zinc-400
+uncommon,4000000,text-green-500
+rare,1000000,text-blue-600
+epic,500000,text-purple-500
+legendary,100000,text-orange-500
+mythic,10000,text-red-600
+superior,1000,text-cyan-400
+ultimate,100,text-yellow-400
+divine,10,text-fuchsia-500
+ascended,1,"text-slate-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"

@@ -8,6 +8,15 @@ import { NavigationDrawer } from '@/components/NavigationDrawer'
 import { CurrencyDisplay } from '@/components/CurrencyDisplay'
 import { CurrencyProvider } from '@/contexts/CurrencyContext'
 
+const SIZES = {
+  headerPadding: "px-4 py-4 sm:px-6 sm:py-6 md:px-10 md:py-8",
+  drawerBtnPadding: "p-2",
+  drawerIcon: "w-5 h-5",
+  logoText: "text-xl sm:text-2xl",
+  loginBtnPadding: "px-6 py-2",
+  loginBtnText: "text-xs",
+}
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
@@ -61,22 +70,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         onSignOut={signOut}
       />
 
-      <header className="w-full px-4 py-4 sm:px-6 sm:py-6 md:px-10 md:py-8 flex flex-row justify-between items-center shrink-0 border-b border-zinc-900">
+      <header className={`w-full ${SIZES.headerPadding} flex flex-row justify-between items-center shrink-0 border-b border-zinc-900`}>
         <div className="flex items-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
-            className="p-2 -ml-2 rounded-lg border border-zinc-800 hover:bg-zinc-900 transition-colors"
+            className={`${SIZES.drawerBtnPadding} -ml-2 rounded-lg border border-zinc-800 hover:bg-zinc-900 transition-colors`}
             aria-label="Open navigation menu"
             aria-expanded={drawerOpen}
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={SIZES.drawerIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <Link
             href="/"
-            className="text-xl sm:text-2xl font-black tracking-tighter text-white hover:text-zinc-300 transition-colors"
+            className={`${SIZES.logoText} font-black tracking-tighter text-white hover:text-zinc-300 transition-colors`}
           >
             ALEAGO
           </Link>
@@ -88,7 +97,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={signIn}
-              className="bg-white text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest hover:bg-zinc-200 transition-colors"
+              className={`bg-white text-black ${SIZES.loginBtnPadding} rounded-full font-bold ${SIZES.loginBtnText} tracking-widest hover:bg-zinc-200 transition-colors`}
             >
               LOGIN
             </button>
