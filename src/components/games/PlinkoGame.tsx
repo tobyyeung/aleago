@@ -9,7 +9,7 @@ import { PLINKO_MULTIPLIERS, generatePlinkoDrop } from '@/lib/games/plinko'
 type GameStatus = 'idle' | 'playing'
 
 export function PlinkoGame() {
-  const { cash, refreshCash, loading: currencyLoading } = useCurrency()
+  const { cash, setCash, refreshCash, loading: currencyLoading } = useCurrency()
   const [status, setStatus] = useState<GameStatus>('idle')
   const [betAmount, setBetAmount] = useState<number>(10)
   const [rows, setRows] = useState<number>(8)
@@ -49,7 +49,9 @@ export function PlinkoGame() {
       return
     }
 
-    await refreshCash()
+    if (res.success && res.cash !== undefined) {
+      setCash(res.cash)
+    }
     setStatus('playing')
     setWinAmount(null)
     setActionLoading(false)
@@ -137,8 +139,10 @@ export function PlinkoGame() {
   async function finishAnimation(multiplier: number, token: string) {
     const winnings = Math.floor(betAmount * multiplier)
     if (winnings > 0) {
-      await adjustCash(token, winnings)
-      await refreshCash()
+      const res = await adjustCash(token, winnings)
+      if (res.success && res.cash !== undefined) {
+        setCash(res.cash)
+      }
     }
     
     setWinAmount(winnings)

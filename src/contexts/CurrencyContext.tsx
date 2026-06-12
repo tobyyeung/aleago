@@ -14,6 +14,7 @@ import { ensureProfile, getProfileCash } from '@/app/currency-actions'
 
 type CurrencyContextValue = {
   cash: number
+  setCash: (cash: number) => void
   loading: boolean
   refreshCash: () => Promise<void>
 }
@@ -58,7 +59,7 @@ export function CurrencyProvider({
   }, [refreshCash])
 
   const value = useMemo(
-    () => ({ cash, loading, refreshCash }),
+    () => ({ cash, setCash, loading, refreshCash }),
     [cash, loading, refreshCash]
   )
 

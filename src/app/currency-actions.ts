@@ -18,10 +18,17 @@ async function getUserFromToken(accessToken: string) {
   return user
 }
 
+let cachedCurrencyColumn: (typeof CURRENCY_COLUMNS)[number] | null = null
+
 async function resolveCurrencyColumn(): Promise<(typeof CURRENCY_COLUMNS)[number] | null> {
+  if (cachedCurrencyColumn) return cachedCurrencyColumn
+
   for (const column of CURRENCY_COLUMNS) {
     const { error } = await supabaseAdmin.from('profiles').select(column).limit(1)
-    if (!error) return column
+    if (!error) {
+      cachedCurrencyColumn = column
+      return column
+    }
     if (!error.message.includes('does not exist')) return null
   }
   return null

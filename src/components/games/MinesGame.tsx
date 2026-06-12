@@ -9,7 +9,7 @@ import { adjustCash } from '@/app/currency-actions'
 type GameStatus = 'idle' | 'playing' | 'cashed_out' | 'busted'
 
 export function MinesGame() {
-  const { cash, refreshCash, loading: currencyLoading } = useCurrency()
+  const { cash, setCash, refreshCash, loading: currencyLoading } = useCurrency()
   const [status, setStatus] = useState<GameStatus>('idle')
   const [grid, setGrid] = useState<Tile[]>(() => generateMinesGrid(3))
   const [betAmount, setBetAmount] = useState<number>(10)
@@ -61,7 +61,9 @@ export function MinesGame() {
       return false
     }
 
-    await refreshCash()
+    if (res.success && res.cash !== undefined) {
+      setCash(res.cash)
+    }
     setStatus('playing')
     setActionLoading(false)
     return true
@@ -117,9 +119,9 @@ export function MinesGame() {
     const winnings = Math.floor(betAmount * finalMultiplier)
 
     const res = await adjustCash(token, winnings)
-    if (res.success) {
-      await refreshCash()
-    } else {
+    if (res.success && res.cash !== undefined) {
+      setCash(res.cash)
+    } else if (!res.success) {
       setErrorMsg(`Error cashing out: ${res.error}`)
     }
 
@@ -170,7 +172,7 @@ export function MinesGame() {
                 if (val < 0) val = 0;
                 setBetAmount(val);
               }}
-              disabled={status !== 'idle'}
+              disabled={status !== 'idle' || actionLoading}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 pl-8 pr-4 text-white font-mono font-bold focus:outline-none focus:border-zinc-500 disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
@@ -179,7 +181,7 @@ export function MinesGame() {
               <button
                 key={`add-${amt}`}
                 onClick={() => setBetAmount(prev => Math.min(prev + amt, Math.floor(cash)))}
-                disabled={status !== 'idle'}
+                disabled={status !== 'idle' || actionLoading}
                 className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-xs font-bold py-2 rounded transition-colors text-zinc-300"
               >
                 +{amt}
@@ -194,7 +196,7 @@ export function MinesGame() {
               step="1"
               value={betAmount || 0}
               onChange={(e) => setBetAmount(Number(e.target.value))}
-              disabled={status !== 'idle'}
+              disabled={status !== 'idle' || actionLoading}
               className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed accent-lime-400"
             />
           </div>
@@ -203,7 +205,7 @@ export function MinesGame() {
               <button
                 key={`sub-${amt}`}
                 onClick={() => setBetAmount(prev => Math.max(0, prev - amt))}
-                disabled={status !== 'idle'}
+                disabled={status !== 'idle' || actionLoading}
                 className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-xs font-bold py-2 rounded transition-colors text-zinc-300"
               >
                 -{amt}
@@ -225,7 +227,7 @@ export function MinesGame() {
               step="1"
               value={minesCount}
               onChange={(e) => setMinesCount(Number(e.target.value))}
-              disabled={status !== 'idle'}
+              disabled={status !== 'idle' || actionLoading}
               className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed accent-lime-400"
             />
             <div className="flex justify-between text-[10px] text-zinc-500 font-mono mt-2 px-1">
