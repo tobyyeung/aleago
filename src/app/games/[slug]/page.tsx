@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MinesGame } from '@/components/games/MinesGame'
+import { PlinkoGame } from '@/components/games/PlinkoGame'
 
 const VALID_GAMES = ['mines', 'plinko', 'tower', 'dice']
 
@@ -33,6 +34,10 @@ export default async function GamePage({
       {slug === 'mines' ? (
         <div className="flex-1 min-h-[600px]">
           <MinesGame />
+        </div>
+      ) : slug === 'plinko' ? (
+        <div className="flex-1 min-h-[600px]">
+          <PlinkoGame />
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center border border-zinc-800 border-dashed rounded-xl bg-zinc-950/50">

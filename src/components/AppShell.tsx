@@ -83,12 +83,40 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <Link
-            href="/"
-            className={`${SIZES.logoText} font-black tracking-tighter text-white hover:text-zinc-300 transition-colors`}
-          >
-            ALEAGO
-          </Link>
+          <div className="flex items-center gap-4 sm:gap-6 ml-2 sm:ml-6">
+            <Link
+              href="/"
+              className={`${SIZES.logoText} font-black tracking-tighter text-white hover:text-zinc-300 transition-colors`}
+            >
+              ALEAGO
+            </Link>
+            <div className="flex items-center gap-3 sm:gap-4 text-base sm:text-lg">
+              <Link href="/inventory" className="group flex items-center h-10 sm:h-12 bg-zinc-900 border border-zinc-800 rounded-full hover:bg-zinc-800 active:scale-95 transition-all shadow-md" title="Inventory">
+                <div className="w-10 sm:w-12 h-full flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
+                  🎒
+                </div>
+                <div className="grid grid-cols-[0fr] group-hover:grid-cols-[1fr] transition-all duration-300 ease-out">
+                  <div className="overflow-hidden whitespace-nowrap">
+                    <span className="pr-4 sm:pr-5 text-[10px] sm:text-xs font-black uppercase tracking-widest text-zinc-300">
+                      Inventory
+                    </span>
+                  </div>
+                </div>
+              </Link>
+              <Link href="/games" className="group flex items-center h-10 sm:h-12 bg-zinc-900 border border-zinc-800 rounded-full hover:bg-zinc-800 active:scale-95 transition-all shadow-md" title="Games">
+                <div className="w-10 sm:w-12 h-full flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
+                  🎮
+                </div>
+                <div className="grid grid-cols-[0fr] group-hover:grid-cols-[1fr] transition-all duration-300 ease-out">
+                  <div className="overflow-hidden whitespace-nowrap">
+                    <span className="pr-4 sm:pr-5 text-[10px] sm:text-xs font-black uppercase tracking-widest text-zinc-300">
+                      Games
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">

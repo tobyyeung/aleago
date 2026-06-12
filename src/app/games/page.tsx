@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function GamesPage() {
   const games = ['Mines', 'Plinko', 'Tower', 'Dice']
@@ -17,13 +18,16 @@ export default function GamesPage() {
           <Link
             key={game}
             href={`/games/${game.toLowerCase()}`}
-            className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 min-h-80 flex flex-col items-center justify-between hover:border-zinc-600 transition-colors cursor-pointer block"
+            className="group bg-zinc-950 border border-zinc-800 rounded-xl p-4 min-h-80 flex flex-col items-center justify-center hover:border-zinc-600 transition-colors cursor-pointer block relative overflow-hidden"
           >
-            <span className="text-sm sm:text-base font-black tracking-wide text-white uppercase">
-              {game}
-            </span>
-            <div className="w-30 h-60 border border-zinc-800 border-dashed rounded flex items-center justify-center text-[8px] font-mono text-zinc-600">
-              [TEMP IMG]
+            <div className="absolute inset-0 w-full h-full">
+              <Image 
+                src={`/images/${game.toLowerCase()}.png`} 
+                alt={`${game} thumbnail`}
+                fill
+                className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500 ease-out"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
             </div>
           </Link>
         ))}
