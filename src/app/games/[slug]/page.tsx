@@ -5,6 +5,12 @@ import { PlinkoGame } from '@/components/games/PlinkoGame'
 
 const VALID_GAMES = ['mines', 'plinko', 'tower', 'dice']
 
+export function generateStaticParams() {
+  return VALID_GAMES.map((game) => ({
+    slug: game,
+  }))
+}
+
 export default async function GamePage({ 
   params 
 }: { 
